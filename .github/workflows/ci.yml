@@ -1,0 +1,69 @@
+name: 'Build and publish HVSequencerController'
+on:
+  create:
+    branches:
+      - rel/**
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: 'Build HVSequencerController'
+    runs-on: windows-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+
+      - name: 'Install .NET SDK'
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 'Set up MSBuild'
+        uses: microsoft/setup-msbuild@v2
+
+      - name: 'Publish .NET (with DLL files and whatnot)'
+        run: dotnet publish HVSequencerController.csproj -c Release
+
+      - name: 'Upload .NET'
+        uses: actions/upload-artifact@v4
+        with:
+          name: HVSequencerController
+          path: bin/Release/net8.0-windows/publish/**
+      
+      - name: 'Publish standalone .NET (x86)'
+        run: dotnet publish HVSequencerController -c Release -p:PublishSingleFile=true -r win-x86 --self-contained false
+
+      - name: 'Upload standalone .NET (x86)'
+        uses: actions/upload-artifact@v4
+        with:
+          name: HVSequencerController.Windows.X86
+          path: bin/Release/net8.0-windows/win-x86/publish/HVSequencerController.exe
+      
+      - name: 'Publish standalone .NET (x64)'
+        run: dotnet publish HVSequencerController -c Release -p:PublishSingleFile=true -r win-x64 --self-contained false
+
+      - name: 'Upload standalone .NET (x64)'
+        uses: actions/upload-artifact@v4
+        with:
+          name: HVSequencerController.Windows.X64
+          path: bin/Release/net8.0-windows/win-x64/publish/HVSequencerController.exe
+      
+      - name: 'Publish self-contained .NET (x86)'
+        run: dotnet publish HVSequencerController -c Release -p:PublishSingleFile=true -r win-x86 --self-contained true
+
+      - name: 'Upload self-contained .NET (x86)'
+        uses: actions/upload-artifact@v4
+        with:
+          name: HVSequencerController.Windows.X86.SelfContained
+          path: bin/Release/net8.0-windows/win-x86/publish/HVSequencerController.exe
+      
+      - name: 'Publish self-contained .NET (x64)'
+        run: dotnet publish HVSequencerController -c Release -p:PublishSingleFile=true -r win-x64 --self-contained true
+
+      - name: 'Upload self-contained .NET (x64)'
+        uses: actions/upload-artifact@v4
+        with:
+          name: HVSequencerController.Windows.X64.SelfContained
+          path: bin/Release/net8.0-windows/win-x64/publish/HVSequencerController.exe
