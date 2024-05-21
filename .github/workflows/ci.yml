@@ -33,7 +33,7 @@ jobs:
           path: bin/Release/net8.0-windows/publish/**
       
       - name: 'Publish standalone .NET (x86)'
-        run: dotnet publish HVSequencerController -c Release -p:PublishSingleFile=true -r win-x86 --self-contained false
+        run: dotnet publish HVSequencerController.csproj -c Release -p:PublishSingleFile=true -r win-x86 --self-contained false
 
       - name: 'Upload standalone .NET (x86)'
         uses: actions/upload-artifact@v4
@@ -42,7 +42,7 @@ jobs:
           path: bin/Release/net8.0-windows/win-x86/publish/HVSequencerController.exe
       
       - name: 'Publish standalone .NET (x64)'
-        run: dotnet publish HVSequencerController -c Release -p:PublishSingleFile=true -r win-x64 --self-contained false
+        run: dotnet publish HVSequencerController.csproj -c Release -p:PublishSingleFile=true -r win-x64 --self-contained false
 
       - name: 'Upload standalone .NET (x64)'
         uses: actions/upload-artifact@v4
@@ -51,7 +51,7 @@ jobs:
           path: bin/Release/net8.0-windows/win-x64/publish/HVSequencerController.exe
       
       - name: 'Publish self-contained .NET (x86)'
-        run: dotnet publish HVSequencerController -c Release -p:PublishSingleFile=true -r win-x86 --self-contained true
+        run: dotnet publish HVSequencerController.csproj -c Release -p:PublishSingleFile=true -r win-x86 --self-contained true
 
       - name: 'Upload self-contained .NET (x86)'
         uses: actions/upload-artifact@v4
@@ -60,7 +60,7 @@ jobs:
           path: bin/Release/net8.0-windows/win-x86/publish/HVSequencerController.exe
       
       - name: 'Publish self-contained .NET (x64)'
-        run: dotnet publish HVSequencerController -c Release -p:PublishSingleFile=true -r win-x64 --self-contained true
+        run: dotnet publish HVSequencerController.csproj -c Release -p:PublishSingleFile=true -r win-x64 --self-contained true
 
       - name: 'Upload self-contained .NET (x64)'
         uses: actions/upload-artifact@v4
