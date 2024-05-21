@@ -16,11 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System.ComponentModel;
+
 namespace HVSequencerController
 {
     public partial class MainForm : Form
     {
-        Device device = new Device();
+        Device device = new Device(); // HV sequencer device
+        BindingList<ISeqAction> seqActions = new BindingList<ISeqAction>(); // list of actions (for sequential actions)
 
         /* update list of available ports */
         private void UpdatePortsMenu()
@@ -34,6 +37,8 @@ namespace HVSequencerController
             /* initialise ports menu */
             UpdatePortsMenu();
             if (devicePort.Items.Count > 0) devicePort.SelectedIndex = 0; // select first port if available
+
+            seqActionsList.DataSource = seqActions;
         }
 
         public MainForm()
@@ -179,6 +184,89 @@ namespace HVSequencerController
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information
             );
+        }
+
+        private void seqActionsAddDelayItem_Click(object sender, EventArgs e)
+        {
+            int index = seqActionsList.SelectedIndex + 1; // add to index after our selected index (-1 if nothing was selected)
+            seqActions.Insert(index, new DelayAction());
+            seqActionsRun.Enabled = true; // there's an item so we can run now
+            seqActionsList.SetSelected(index, true); // select last item
+            seqActionsEditItem_Click(sender, e); // open edit dialog
+        }
+
+        private void seqActionsAddCtrlItem_Click(object sender, EventArgs e)
+        {
+            int index = seqActionsList.SelectedIndex + 1; // add to index after our selected index (-1 if nothing was selected)
+            seqActions.Insert(index, new ControlAction(device)); // add to last
+            seqActionsRun.Enabled = true;
+            seqActionsList.SetSelected(index, true); // select last item
+            seqActionsEditItem_Click(sender, e); // open edit dialog
+        }
+
+        private void seqActionsDelItem_Click(object sender, EventArgs e)
+        {
+            int selectedItem = seqActionsList.SelectedIndex;
+            seqActions.RemoveAt(selectedItem); // and delete it
+            if (seqActions.Count == 0) seqActionsRun.Enabled = false; // no actions to run
+        }
+
+        private void seqActionsList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            seqActionsDelItem.Enabled = (seqActionsList.SelectedIndex >= 0); // enable delete only if an item is selected
+            seqActionsEditItem.Enabled = (seqActionsDelItem.Enabled && seqActions[seqActionsList.SelectedIndex] is not ResetAction); // enable edit if we're selecting an item that's not reset action (because it is not editable)
+            seqActionsMoveItemUp.Enabled = (seqActionsList.SelectedIndex > 0); // we can move any item that's not the first one up
+            seqActionsMoveItemDown.Enabled = (seqActionsList.SelectedIndex < seqActions.Count - 1); // and we can move any item that's not the last one down
+        }
+
+        private void seqActionsMoveItemUp_Click(object sender, EventArgs e)
+        {
+            int selectedItem = seqActionsList.SelectedIndex;
+            var temp = seqActions[selectedItem];
+            seqActions[selectedItem] = seqActions[selectedItem - 1]; seqActions[selectedItem - 1] = temp;
+            seqActionsList.SetSelected(selectedItem - 1, true); // move our selection up too
+        }
+
+        private void seqActionsMoveItemDown_Click(object sender, EventArgs e)
+        {
+            int selectedItem = seqActionsList.SelectedIndex;
+            var temp = seqActions[selectedItem];
+            seqActions[selectedItem] = seqActions[selectedItem + 1]; seqActions[selectedItem + 1] = temp;
+            seqActionsList.SetSelected(selectedItem + 1, true); // move our selection down too
+        }
+
+        private void seqActionsRun_Click(object sender, EventArgs e)
+        {
+            new Thread(() =>
+            {
+                actionTabs.Invoke(() => { actionTabs.Enabled = false; }); // disable tabs so we can't do anything else
+                foreach (var action in seqActions) action.Execute(); // execute each action
+                actionTabs.Invoke(() => { actionTabs.Enabled = true; });
+            }).Start(); // start in new thread (so we don't block our UI)
+        }
+
+        private void seqActionsEditItem_Click(object sender, EventArgs e)
+        {
+            var selectedAction = seqActions[seqActionsList.SelectedIndex];
+
+            if (selectedAction is ControlAction) new ControlActionEditForm((ControlAction)selectedAction).ShowDialog();
+            else if (selectedAction is DelayAction) new DelayActionEditForm((DelayAction)selectedAction).ShowDialog();
+            else throw new InvalidOperationException("Selected item is neither ControlAction nor DelayAction");
+
+            seqActionsList.DrawMode = DrawMode.OwnerDrawFixed; seqActionsList.DrawMode = DrawMode.Normal; // force refresh
+        }
+
+        private void seqActionsAddResetItem_Click(object sender, EventArgs e)
+        {
+            int index = seqActionsList.SelectedIndex + 1; // add to index after our selected index (-1 if nothing was selected)
+            seqActions.Insert(index, new ResetAction(device)); // add to last
+            seqActionsRun.Enabled = true;
+            seqActionsList.SetSelected(index, true); // select last item
+        }
+
+        private void seqActionsList_DoubleClick(object sender, EventArgs e)
+        {
+            if (seqActionsEditItem.Enabled) seqActionsEditItem_Click(sender, e); // treat double click as edit
         }
     }
 }

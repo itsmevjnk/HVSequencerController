@@ -21,7 +21,7 @@ using System.Text;
 
 namespace HVSequencerController
 {
-    internal class Device
+    public class Device
     {
         /* serial port object */
         private SerialPort _serial = new SerialPort();

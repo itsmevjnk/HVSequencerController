@@ -68,7 +68,18 @@ namespace HVSequencerController
             ch2Toggle = new Button();
             ch1Toggle = new Button();
             ch1QuickVoltLabel = new Label();
-            scriptedActionTab = new TabPage();
+            seqActionsTab = new TabPage();
+            seqActionsHorizTable = new TableLayoutPanel();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            seqActionsAddDelayItem = new Button();
+            seqActionsAddCtrlItem = new Button();
+            seqActionsRun = new Button();
+            seqActionsMoveItemDown = new Button();
+            seqActionsMoveItemUp = new Button();
+            seqActionsDelItem = new Button();
+            seqActionsEditItem = new Button();
+            seqActionsAddResetItem = new Button();
+            seqActionsList = new ListBox();
             deviceOutputGroup = new GroupBox();
             deviceOutput = new TextBox();
             creditsLabel = new LinkLabel();
@@ -81,6 +92,9 @@ namespace HVSequencerController
             ((System.ComponentModel.ISupportInitialize)ch3QuickVolt).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ch2QuickVolt).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ch1QuickVolt).BeginInit();
+            seqActionsTab.SuspendLayout();
+            seqActionsHorizTable.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             deviceOutputGroup.SuspendLayout();
             SuspendLayout();
             // 
@@ -174,7 +188,7 @@ namespace HVSequencerController
             // actionTabs
             // 
             actionTabs.Controls.Add(quickActionTab);
-            actionTabs.Controls.Add(scriptedActionTab);
+            actionTabs.Controls.Add(seqActionsTab);
             actionTabs.Enabled = false;
             actionTabs.Location = new Point(12, 12);
             actionTabs.Name = "actionTabs";
@@ -366,15 +380,161 @@ namespace HVSequencerController
             ch1QuickVoltLabel.TabIndex = 4;
             ch1QuickVoltLabel.Text = "Voltage (kV):";
             // 
-            // scriptedActionTab
+            // seqActionsTab
             // 
-            scriptedActionTab.Location = new Point(4, 24);
-            scriptedActionTab.Name = "scriptedActionTab";
-            scriptedActionTab.Padding = new Padding(3);
-            scriptedActionTab.Size = new Size(492, 272);
-            scriptedActionTab.TabIndex = 1;
-            scriptedActionTab.Text = "Sequential actions";
-            scriptedActionTab.UseVisualStyleBackColor = true;
+            seqActionsTab.Controls.Add(seqActionsHorizTable);
+            seqActionsTab.Location = new Point(4, 24);
+            seqActionsTab.Name = "seqActionsTab";
+            seqActionsTab.Padding = new Padding(3);
+            seqActionsTab.Size = new Size(492, 272);
+            seqActionsTab.TabIndex = 1;
+            seqActionsTab.Text = "Sequential actions";
+            seqActionsTab.UseVisualStyleBackColor = true;
+            // 
+            // seqActionsHorizTable
+            // 
+            seqActionsHorizTable.ColumnCount = 2;
+            seqActionsHorizTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 80F));
+            seqActionsHorizTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 20F));
+            seqActionsHorizTable.Controls.Add(tableLayoutPanel1, 1, 0);
+            seqActionsHorizTable.Controls.Add(seqActionsList, 0, 0);
+            seqActionsHorizTable.Location = new Point(6, 6);
+            seqActionsHorizTable.Name = "seqActionsHorizTable";
+            seqActionsHorizTable.RowCount = 1;
+            seqActionsHorizTable.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            seqActionsHorizTable.Size = new Size(480, 260);
+            seqActionsHorizTable.TabIndex = 0;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Controls.Add(seqActionsAddDelayItem, 0, 1);
+            tableLayoutPanel1.Controls.Add(seqActionsAddCtrlItem, 0, 0);
+            tableLayoutPanel1.Controls.Add(seqActionsRun, 0, 7);
+            tableLayoutPanel1.Controls.Add(seqActionsMoveItemDown, 0, 6);
+            tableLayoutPanel1.Controls.Add(seqActionsMoveItemUp, 0, 5);
+            tableLayoutPanel1.Controls.Add(seqActionsDelItem, 0, 4);
+            tableLayoutPanel1.Controls.Add(seqActionsEditItem, 0, 3);
+            tableLayoutPanel1.Controls.Add(seqActionsAddResetItem, 0, 2);
+            tableLayoutPanel1.Location = new Point(387, 3);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 8;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 12.5F));
+            tableLayoutPanel1.Size = new Size(90, 244);
+            tableLayoutPanel1.TabIndex = 0;
+            // 
+            // seqActionsAddDelayItem
+            // 
+            seqActionsAddDelayItem.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            seqActionsAddDelayItem.Location = new Point(3, 33);
+            seqActionsAddDelayItem.Name = "seqActionsAddDelayItem";
+            seqActionsAddDelayItem.Size = new Size(84, 23);
+            seqActionsAddDelayItem.TabIndex = 6;
+            seqActionsAddDelayItem.Text = "Add delay";
+            seqActionsAddDelayItem.UseVisualStyleBackColor = true;
+            seqActionsAddDelayItem.Click += seqActionsAddDelayItem_Click;
+            // 
+            // seqActionsAddCtrlItem
+            // 
+            seqActionsAddCtrlItem.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            seqActionsAddCtrlItem.Location = new Point(3, 3);
+            seqActionsAddCtrlItem.Name = "seqActionsAddCtrlItem";
+            seqActionsAddCtrlItem.Size = new Size(84, 23);
+            seqActionsAddCtrlItem.TabIndex = 0;
+            seqActionsAddCtrlItem.Text = "Add control";
+            seqActionsAddCtrlItem.UseVisualStyleBackColor = true;
+            seqActionsAddCtrlItem.Click += seqActionsAddCtrlItem_Click;
+            // 
+            // seqActionsRun
+            // 
+            seqActionsRun.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            seqActionsRun.Enabled = false;
+            seqActionsRun.Location = new Point(3, 215);
+            seqActionsRun.Name = "seqActionsRun";
+            seqActionsRun.Size = new Size(84, 23);
+            seqActionsRun.TabIndex = 5;
+            seqActionsRun.Text = "Execute";
+            seqActionsRun.UseVisualStyleBackColor = true;
+            seqActionsRun.Click += seqActionsRun_Click;
+            // 
+            // seqActionsMoveItemDown
+            // 
+            seqActionsMoveItemDown.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            seqActionsMoveItemDown.Enabled = false;
+            seqActionsMoveItemDown.Location = new Point(3, 183);
+            seqActionsMoveItemDown.Name = "seqActionsMoveItemDown";
+            seqActionsMoveItemDown.Size = new Size(84, 23);
+            seqActionsMoveItemDown.TabIndex = 4;
+            seqActionsMoveItemDown.Text = "Move down";
+            seqActionsMoveItemDown.UseVisualStyleBackColor = true;
+            seqActionsMoveItemDown.Click += seqActionsMoveItemDown_Click;
+            // 
+            // seqActionsMoveItemUp
+            // 
+            seqActionsMoveItemUp.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            seqActionsMoveItemUp.Enabled = false;
+            seqActionsMoveItemUp.Location = new Point(3, 153);
+            seqActionsMoveItemUp.Name = "seqActionsMoveItemUp";
+            seqActionsMoveItemUp.Size = new Size(84, 23);
+            seqActionsMoveItemUp.TabIndex = 3;
+            seqActionsMoveItemUp.Text = "Move up";
+            seqActionsMoveItemUp.UseVisualStyleBackColor = true;
+            seqActionsMoveItemUp.Click += seqActionsMoveItemUp_Click;
+            // 
+            // seqActionsDelItem
+            // 
+            seqActionsDelItem.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            seqActionsDelItem.Enabled = false;
+            seqActionsDelItem.Location = new Point(3, 123);
+            seqActionsDelItem.Name = "seqActionsDelItem";
+            seqActionsDelItem.Size = new Size(84, 23);
+            seqActionsDelItem.TabIndex = 2;
+            seqActionsDelItem.Text = "Remove";
+            seqActionsDelItem.UseVisualStyleBackColor = true;
+            seqActionsDelItem.Click += seqActionsDelItem_Click;
+            // 
+            // seqActionsEditItem
+            // 
+            seqActionsEditItem.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            seqActionsEditItem.Enabled = false;
+            seqActionsEditItem.Location = new Point(3, 93);
+            seqActionsEditItem.Name = "seqActionsEditItem";
+            seqActionsEditItem.Size = new Size(84, 23);
+            seqActionsEditItem.TabIndex = 1;
+            seqActionsEditItem.Text = "Edit";
+            seqActionsEditItem.UseVisualStyleBackColor = true;
+            seqActionsEditItem.Click += seqActionsEditItem_Click;
+            // 
+            // seqActionsAddResetItem
+            // 
+            seqActionsAddResetItem.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+            seqActionsAddResetItem.Location = new Point(3, 63);
+            seqActionsAddResetItem.Name = "seqActionsAddResetItem";
+            seqActionsAddResetItem.Size = new Size(84, 23);
+            seqActionsAddResetItem.TabIndex = 7;
+            seqActionsAddResetItem.Text = "Add reset";
+            seqActionsAddResetItem.UseVisualStyleBackColor = true;
+            seqActionsAddResetItem.Click += seqActionsAddResetItem_Click;
+            // 
+            // seqActionsList
+            // 
+            seqActionsList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            seqActionsList.FormattingEnabled = true;
+            seqActionsList.ItemHeight = 15;
+            seqActionsList.Location = new Point(3, 3);
+            seqActionsList.Name = "seqActionsList";
+            seqActionsList.Size = new Size(378, 244);
+            seqActionsList.TabIndex = 1;
+            seqActionsList.SelectedIndexChanged += seqActionsList_SelectedIndexChanged;
+            seqActionsList.DoubleClick += seqActionsList_DoubleClick;
             // 
             // deviceOutputGroup
             // 
@@ -429,6 +589,9 @@ namespace HVSequencerController
             ((System.ComponentModel.ISupportInitialize)ch3QuickVolt).EndInit();
             ((System.ComponentModel.ISupportInitialize)ch2QuickVolt).EndInit();
             ((System.ComponentModel.ISupportInitialize)ch1QuickVolt).EndInit();
+            seqActionsTab.ResumeLayout(false);
+            seqActionsHorizTable.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
             deviceOutputGroup.ResumeLayout(false);
             deviceOutputGroup.PerformLayout();
             ResumeLayout(false);
@@ -446,7 +609,7 @@ namespace HVSequencerController
         private Button deviceToggleConnect;
         private TabControl actionTabs;
         private TabPage quickActionTab;
-        private TabPage scriptedActionTab;
+        private TabPage seqActionsTab;
         private GroupBox deviceOutputGroup;
         private TextBox deviceOutput;
         private TableLayoutPanel quickActionsTable;
@@ -463,5 +626,16 @@ namespace HVSequencerController
         private NumericUpDown ch2QuickVolt;
         private NumericUpDown ch1QuickVolt;
         private LinkLabel creditsLabel;
+        private TableLayoutPanel seqActionsHorizTable;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Button seqActionsAddCtrlItem;
+        private Button seqActionsEditItem;
+        private Button seqActionsDelItem;
+        private Button seqActionsMoveItemUp;
+        private Button seqActionsMoveItemDown;
+        private Button seqActionsRun;
+        private ListBox seqActionsList;
+        private Button seqActionsAddDelayItem;
+        private Button seqActionsAddResetItem;
     }
 }
