@@ -1,4 +1,22 @@
-﻿namespace HVSequencerController
+﻿/*
+ * Copyright 2024 Thanh Vinh Nguyen (itsmevjnk)
+ * This file is part of HVSequencerController.
+ * 
+ * HVSequencerController is free software: you can redistribute it 
+ * and/or modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+namespace HVSequencerController
 {
     partial class MainForm
     {
@@ -34,8 +52,7 @@
             label2 = new Label();
             devicePort = new ComboBox();
             deviceSpeed = new ComboBox();
-            button1 = new Button();
-            label3 = new Label();
+            deviceToggleConnect = new Button();
             actionTabs = new TabControl();
             quickActionTab = new TabPage();
             quickActionsTable = new TableLayoutPanel();
@@ -54,6 +71,7 @@
             scriptedActionTab = new TabPage();
             deviceOutputGroup = new GroupBox();
             deviceOutput = new TextBox();
+            creditsLabel = new LinkLabel();
             deviceSetupGroup.SuspendLayout();
             deviceSetupTable.SuspendLayout();
             actionTabs.SuspendLayout();
@@ -87,7 +105,7 @@
             deviceSetupTable.Controls.Add(label2, 2, 0);
             deviceSetupTable.Controls.Add(devicePort, 1, 0);
             deviceSetupTable.Controls.Add(deviceSpeed, 3, 0);
-            deviceSetupTable.Controls.Add(button1, 0, 1);
+            deviceSetupTable.Controls.Add(deviceToggleConnect, 0, 1);
             deviceSetupTable.Location = new Point(6, 22);
             deviceSetupTable.Name = "deviceSetupTable";
             deviceSetupTable.RowCount = 2;
@@ -127,41 +145,37 @@
             devicePort.Name = "devicePort";
             devicePort.Size = new Size(275, 23);
             devicePort.TabIndex = 2;
+            devicePort.DropDown += devicePort_DropDown;
             // 
             // deviceSpeed
             // 
             deviceSpeed.Anchor = AnchorStyles.None;
             deviceSpeed.FormattingEnabled = true;
+            deviceSpeed.Items.AddRange(new object[] { "300", "600", "1200", "2400", "4800", "9600", "14400", "19200", "28800", "31250", "38400", "57600", "115200" });
             deviceSpeed.Location = new Point(486, 8);
             deviceSpeed.Name = "deviceSpeed";
             deviceSpeed.Size = new Size(275, 23);
             deviceSpeed.TabIndex = 3;
+            deviceSpeed.Text = "9600";
+            deviceSpeed.TextUpdate += deviceSpeed_TextUpdate;
             // 
-            // button1
+            // deviceToggleConnect
             // 
-            button1.Anchor = AnchorStyles.None;
-            deviceSetupTable.SetColumnSpan(button1, 4);
-            button1.Location = new Point(323, 47);
-            button1.Name = "button1";
-            button1.Size = new Size(118, 23);
-            button1.TabIndex = 4;
-            button1.Text = "Connect";
-            button1.UseVisualStyleBackColor = true;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Enabled = false;
-            label3.Location = new Point(12, 427);
-            label3.Name = "label3";
-            label3.Size = new Size(389, 15);
-            label3.TabIndex = 1;
-            label3.Text = "(C) 2024 itsmevjnk (Thanh Vinh Nguyen) - https://github.com/itsmevjnk";
+            deviceToggleConnect.Anchor = AnchorStyles.None;
+            deviceSetupTable.SetColumnSpan(deviceToggleConnect, 4);
+            deviceToggleConnect.Location = new Point(323, 47);
+            deviceToggleConnect.Name = "deviceToggleConnect";
+            deviceToggleConnect.Size = new Size(118, 23);
+            deviceToggleConnect.TabIndex = 4;
+            deviceToggleConnect.Text = "Connect";
+            deviceToggleConnect.UseVisualStyleBackColor = true;
+            deviceToggleConnect.Click += deviceToggleConnect_Click;
             // 
             // actionTabs
             // 
             actionTabs.Controls.Add(quickActionTab);
             actionTabs.Controls.Add(scriptedActionTab);
+            actionTabs.Enabled = false;
             actionTabs.Location = new Point(12, 12);
             actionTabs.Name = "actionTabs";
             actionTabs.SelectedIndex = 0;
@@ -214,12 +228,13 @@
             ch4QuickVolt.DecimalPlaces = 3;
             ch4QuickVolt.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             ch4QuickVolt.Location = new Point(348, 229);
-            ch4QuickVolt.Maximum = new decimal(new int[] { 7, 0, 0, 0 });
-            ch4QuickVolt.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
+            ch4QuickVolt.Maximum = new decimal(new int[] { 7000, 0, 0, 196608 });
+            ch4QuickVolt.Minimum = new decimal(new int[] { 2000, 0, 0, 196608 });
             ch4QuickVolt.Name = "ch4QuickVolt";
             ch4QuickVolt.Size = new Size(120, 23);
             ch4QuickVolt.TabIndex = 10;
-            ch4QuickVolt.Value = new decimal(new int[] { 2, 0, 0, 0 });
+            ch4QuickVolt.Value = new decimal(new int[] { 2000, 0, 0, 196608 });
+            ch4QuickVolt.ValueChanged += ch4QuickVolt_ValueChanged;
             // 
             // ch3QuickVolt
             // 
@@ -227,12 +242,13 @@
             ch3QuickVolt.DecimalPlaces = 3;
             ch3QuickVolt.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             ch3QuickVolt.Location = new Point(108, 229);
-            ch3QuickVolt.Maximum = new decimal(new int[] { 7, 0, 0, 0 });
-            ch3QuickVolt.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
+            ch3QuickVolt.Maximum = new decimal(new int[] { 7000, 0, 0, 196608 });
+            ch3QuickVolt.Minimum = new decimal(new int[] { 2000, 0, 0, 196608 });
             ch3QuickVolt.Name = "ch3QuickVolt";
             ch3QuickVolt.Size = new Size(120, 23);
             ch3QuickVolt.TabIndex = 9;
-            ch3QuickVolt.Value = new decimal(new int[] { 2, 0, 0, 0 });
+            ch3QuickVolt.Value = new decimal(new int[] { 2000, 0, 0, 196608 });
+            ch3QuickVolt.ValueChanged += ch3QuickVolt_ValueChanged;
             // 
             // ch2QuickVolt
             // 
@@ -240,12 +256,13 @@
             ch2QuickVolt.DecimalPlaces = 3;
             ch2QuickVolt.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             ch2QuickVolt.Location = new Point(348, 99);
-            ch2QuickVolt.Maximum = new decimal(new int[] { 7, 0, 0, 0 });
-            ch2QuickVolt.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
+            ch2QuickVolt.Maximum = new decimal(new int[] { 7000, 0, 0, 196608 });
+            ch2QuickVolt.Minimum = new decimal(new int[] { 2000, 0, 0, 196608 });
             ch2QuickVolt.Name = "ch2QuickVolt";
             ch2QuickVolt.Size = new Size(120, 23);
             ch2QuickVolt.TabIndex = 8;
-            ch2QuickVolt.Value = new decimal(new int[] { 2, 0, 0, 0 });
+            ch2QuickVolt.Value = new decimal(new int[] { 2000, 0, 0, 196608 });
+            ch2QuickVolt.ValueChanged += ch2QuickVolt_ValueChanged;
             // 
             // ch1QuickVolt
             // 
@@ -253,12 +270,13 @@
             ch1QuickVolt.DecimalPlaces = 3;
             ch1QuickVolt.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             ch1QuickVolt.Location = new Point(108, 99);
-            ch1QuickVolt.Maximum = new decimal(new int[] { 7, 0, 0, 0 });
-            ch1QuickVolt.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
+            ch1QuickVolt.Maximum = new decimal(new int[] { 7000, 0, 0, 196608 });
+            ch1QuickVolt.Minimum = new decimal(new int[] { 2000, 0, 0, 196608 });
             ch1QuickVolt.Name = "ch1QuickVolt";
             ch1QuickVolt.Size = new Size(120, 23);
             ch1QuickVolt.TabIndex = 1;
-            ch1QuickVolt.Value = new decimal(new int[] { 2, 0, 0, 0 });
+            ch1QuickVolt.Value = new decimal(new int[] { 2000, 0, 0, 196608 });
+            ch1QuickVolt.ValueChanged += ch1QuickVolt_ValueChanged;
             // 
             // ch4QuickVoltLabel
             // 
@@ -300,6 +318,7 @@
             ch4Toggle.TabIndex = 3;
             ch4Toggle.Text = "Turn ON CH4";
             ch4Toggle.UseVisualStyleBackColor = true;
+            ch4Toggle.Click += ch4Toggle_Click;
             // 
             // ch3Toggle
             // 
@@ -311,6 +330,7 @@
             ch3Toggle.TabIndex = 2;
             ch3Toggle.Text = "Turn ON CH3";
             ch3Toggle.UseVisualStyleBackColor = true;
+            ch3Toggle.Click += ch3Toggle_Click;
             // 
             // ch2Toggle
             // 
@@ -322,6 +342,7 @@
             ch2Toggle.TabIndex = 1;
             ch2Toggle.Text = "Turn ON CH2";
             ch2Toggle.UseVisualStyleBackColor = true;
+            ch2Toggle.Click += ch2Toggle_Click;
             // 
             // ch1Toggle
             // 
@@ -333,6 +354,7 @@
             ch1Toggle.TabIndex = 0;
             ch1Toggle.Text = "Turn ON CH1";
             ch1Toggle.UseVisualStyleBackColor = true;
+            ch1Toggle.Click += ch1Toggle_Click;
             // 
             // ch1QuickVoltLabel
             // 
@@ -373,17 +395,29 @@
             deviceOutput.Size = new Size(255, 248);
             deviceOutput.TabIndex = 0;
             // 
+            // creditsLabel
+            // 
+            creditsLabel.AutoSize = true;
+            creditsLabel.Location = new Point(12, 427);
+            creditsLabel.Name = "creditsLabel";
+            creditsLabel.Size = new Size(513, 15);
+            creditsLabel.TabIndex = 4;
+            creditsLabel.TabStop = true;
+            creditsLabel.Text = "© 2024 itsmevjnk (Thanh Vinh Nguyen) - https://github.com/itsmevjnk/HVSequencerController";
+            creditsLabel.LinkClicked += creditsLabel_LinkClicked;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(creditsLabel);
             Controls.Add(deviceOutputGroup);
             Controls.Add(actionTabs);
-            Controls.Add(label3);
             Controls.Add(deviceSetupGroup);
             Name = "MainForm";
             Text = "HV Sequencer Controller";
+            Load += MainForm_Load;
             deviceSetupGroup.ResumeLayout(false);
             deviceSetupTable.ResumeLayout(false);
             deviceSetupTable.PerformLayout();
@@ -409,8 +443,7 @@
         private Label label2;
         private ComboBox devicePort;
         private ComboBox deviceSpeed;
-        private Button button1;
-        private Label label3;
+        private Button deviceToggleConnect;
         private TabControl actionTabs;
         private TabPage quickActionTab;
         private TabPage scriptedActionTab;
@@ -429,5 +462,6 @@
         private NumericUpDown ch3QuickVolt;
         private NumericUpDown ch2QuickVolt;
         private NumericUpDown ch1QuickVolt;
+        private LinkLabel creditsLabel;
     }
 }
